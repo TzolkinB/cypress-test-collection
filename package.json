@@ -1,0 +1,21 @@
+{
+    "name": "cypress-test-collection",
+    "version": "1.0.0",
+    "description": "Collection of cypress tests",
+    "scripts": {
+        "cy:open": "cypress open --e2e"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/TzolkinB/cypress-test-collection.git"
+    },
+    "author": "Kim Bell",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/TzolkinB/cypress-test-collection/issues"
+    },
+    "homepage": "https://github.com/TzolkinB/cypress-test-collection#readme",
+    "devDependencies": {
+        "cypress": "^13.13.3"
+    }
+}
