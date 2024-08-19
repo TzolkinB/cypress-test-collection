@@ -1,25 +1,38 @@
 describe("Checkers Game UI", () => {
 	beforeEach(() => {
 		cy.visit("https://www.gamesforthebrain.com/game/checkers/")
-		cy.url().should("include", "/checkers")
+		cy.url().should('include', '/checkers')
   })
 
   it("Should check page structure and have functional board", () => {
 		const rulesHref = "https://en.wikipedia.org/wiki/English_draughts#Starting_position"
-		cy.get("h1").should("have.text", "Checkers")
+		cy.get('h1').should('have.text', 'Checkers')
 
-		cy.get(".content").within(() => {
-		  cy.get("#board") // game board
+		cy.get('.content').within(() => {
+		  cy.get('#board') // game board
+			cy.get('img[src="you1.gif"]').should('have.length', 12)
 
       cy.verifyMessage("Select an orange piece to move.", "be.visible")
       cy.yourFirstMove("space02", "space13")
       cy.verifyMessage("Make a move.", "be.visible")
 			cy.wait(1000) // bad practice but no other way
-			cy.get('img[name="space51"]').should('have.attr','src','you1.gif').click()
-			cy.get('img[name="space15"]').click()
-			cy.verifyMessage("This is an invalid move.", "be.visible")
+			
+			// 2nd move
+			cy.get('img[name="space62"]').should('have.attr','src','you1.gif').click()
+			cy.get('img[name="space53"]').click()
+      cy.verifyMessage("Make a move.", "be.visible")
+			// Verify computer has taken your piece, start with 12
+			cy.get('img[src="you1.gif"]').should('have.length', 11)
+			
+			// 3rd move
+			// Wait until last step is complete before can continue
+			cy.wait(2000) // bad practice but no other way
+			cy.get('img[name="space53"]').should('have.attr','src','you1.gif').click()
+			cy.get('img[name="space44"]').click()
+			// Verify computer has taken your piece
+			cy.get('img[src="you1.gif"]').should('have.length', 10)
 	  
-			cy.get("a").should("have.length", 2)
+			cy.get('a').should('have.length', 2)
 			cy.verifyLink(0, "Restart...", "./")
 			cy.verifyLink(1, "Rules", rulesHref)
 

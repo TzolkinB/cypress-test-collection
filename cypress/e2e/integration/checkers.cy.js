@@ -6,16 +6,17 @@ describe("Checkers Game UI", () => {
 
   it("Should have header, game content, navigation, and footer", () => {
 		const rulesHref = "https://en.wikipedia.org/wiki/English_draughts#Starting_position"
-		cy.get("h1").should("have.text", "Checkers")
+		cy.get('h1').should('have.text', 'Checkers')
 
-		cy.get(".content").within(() => {
-		  cy.get("#board") // game board
+		cy.get('.content').within(() => {
+		  cy.get('#board') // game board
+			cy.get('img[src="you1.gif"]').should('have.length', 12)
 	  
-			cy.get("a").should("have.length", 2)
+			cy.get('a').should('have.length', 2)
 			cy.verifyLink(0, "Restart...", "./")
 			cy.verifyLink(1, "Rules", rulesHref)
 
-		  cy.request(rulesHref).its("status").should("eq", 200)
+		  cy.request(rulesHref).its('status').should('eq', 200)
 		})
 
 		cy.get('#navigation').within(() => {
