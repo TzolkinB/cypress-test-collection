@@ -4,6 +4,7 @@
     "description": "Collection of cypress tests",
     "scripts": {
         "cy:open": "cypress open --e2e",
+        "cy:run": "cypress run",
         "lint": "eslint . --ext .js"
     },
     "repository": {
