@@ -85,7 +85,7 @@ describe("Deck of Cards API", () => {
     }) 
   })
 
-  // Partial Deck -- WIP
+  // Partial Deck
   it('Should GET a partial deck', () => {
     cy.request("https://www.deckofcardsapi.com/api/deck/new/shuffle/?cards=AS,AD,AC,AH,KS,KD,KC,KH,QS,QD,QC,QH,JS,JD,JC,JH").should(response => {
       successStatusObjBody(response)
@@ -94,13 +94,6 @@ describe("Deck of Cards API", () => {
     })
   })
 
-  it('Should draw cards from a new shuffled deck)', () => {
-    cy.request("https://www.deckofcardsapi.com/api/deck/new/draw/?count=2").should(response => {
-      successStatusObjBody(response)
-      expect(response.body.cards).to.have.length(2)
-      expect(response.body.remaining).to.eq(50)
-    })
-  })
 
   // Brand New Deck
   it('Should GET a new deck of cards (with/without Jokers)', () => {
@@ -131,6 +124,14 @@ describe("Deck of Cards API", () => {
       successStatusObjBody(response)
       expect(response.body.shuffled).to.eq(true)
       expect(response.body.remaining).to.eq(104)
+    })
+  })
+  
+  it('Should draw cards from a new shuffled deck)', () => {
+    cy.request("https://www.deckofcardsapi.com/api/deck/new/draw/?count=2").should(response => {
+      successStatusObjBody(response)
+      expect(response.body.cards).to.have.length(2)
+      expect(response.body.remaining).to.eq(50)
     })
   })
 })
