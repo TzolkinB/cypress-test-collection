@@ -4,59 +4,85 @@ describe("Deck of Cards API", () => {
 		cy.url().should("include", "deckofcardsapi")
   })
 
-  it.only('Should shuffle a deck of card, draw 10 cards', () => {
-    // Shuffle Cards
-    cy.request("https://www.deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1").then(response => {
+  const successStatusObjBody = (response) => {
       expect(response.status).to.equal(200)
       assert.isObject(response.body, "Response body is an object")
+  }
+
+  it.only('Should shuffle a deck of cards, draw cards, make a pile', () => {
+    // Shuffle Cards
+    cy.log('Shuffle the deck')
+    cy.request("https://www.deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1").then(response => {
+      successStatusObjBody(response)
       expect(response.body).to.have.property('shuffled').to.eq(true)
       expect(response.body.shuffled).to.eq(true)
       expect(response.body.remaining).to.eq(52)
 
-    const deckID = response.body.deck_id
+      const deckID = response.body.deck_id
+      
+      // Draw Cards
+      cy.log('Draw 12 cards')
+      cy.request(`https://www.deckofcardsapi.com/api/deck/${deckID}/draw/?count=12`).then(response => {
+        successStatusObjBody(response)
+        expect(response.body.cards).to.have.length(12)
+        expect(response.body.remaining).to.eq(40)
+        
+        const cardArray = response.body.cards
+        const cardCodes = cardArray.map(card => card.code)
+        // Out of 12 drawn cards, set aside 8 in a pile
+        const cardValues = cardCodes.slice(4).join()
 
-    // Draw Cards
-    cy.request(`https://www.deckofcardsapi.com/api/deck/${deckID}/draw/?count=10`).then(response => {
-      expect(response.status).to.equal(200)
-      assert.isObject(response.body, "Response body is an object")
-      expect(response.body.cards).to.have.length(10)
-      expect(response.body.remaining).to.eq(42)
+        const pileName = 'pile1Cards'
+        
+        // Add Drawn Cards to Piles
+        cy.log('Add 8 cards to a pile')
+        cy.request(`https://www.deckofcardsapi.com/api/deck/${deckID}/pile/${pileName}/add/?cards=${cardValues}`).then(response => {
+          successStatusObjBody(response)
+          assert.isObject(response.body.piles, "Response body 'piles' property is an object")
+          expect(response.body.piles.pile1Cards.remaining).to.eq(8)
 
-      const cardArray = response.body.cards
-      const cardCodes = cardArray.map(card => card.code)
-      // Out of 10 drawn cards, set aside 4 in a pile
-      const cardValues = cardCodes.slice(6).join()
+          // List Cards in the Pile
+          cy.request(`https://www.deckofcardsapi.com/api/deck/${deckID}/pile/${pileName}/list/`).then(response => {
+            successStatusObjBody(response)
+            expect(response.body.piles.pile1Cards.cards).to.deep.eq(cardArray.slice(4))
 
-    // Add Drawn Cards to Piles
-    cy.request(`https://www.deckofcardsapi.com/api/deck/${deckID}/pile/pile1Cards/add/?cards=${cardValues}`).then(response => {
-      expect(response.status).to.equal(200)
-      assert.isObject(response.body, "Response body is an object")
-      assert.isObject(response.body.piles, "Response body 'piles' property is an object")
-      expect(response.body.piles.pile1Cards.remaining).to.eq(4)
-    })
-    })
+            // Shuffle Pile
+            cy.log('Shuffle the pile of 8 cards')
+            cy.request(`https://www.deckofcardsapi.com/api/deck/${deckID}/pile/${pileName}/shuffle/`).then(response => {
+              successStatusObjBody(response)
+
+              // List Cards in the Pile
+              cy.request(`https://www.deckofcardsapi.com/api/deck/${deckID}/pile/${pileName}/list/`).then(response => {
+                expect(response.body.piles.pile1Cards.cards).to.not.deep.eq(cardArray.slice(4))
+
+                // Return Cards to Deck
+                // Return the remaining 4 cards in your hand that you did not put in the pile
+                cy.log('Return cards not in a pile to the deck')
+                cy.request(`https://www.deckofcardsapi.com/api/deck/${deckID}/return/`).then(response => {
+                  successStatusObjBody(response)
+                  expect(response.body.remaining).to.eq(44)
+
+                  // Reshuffle Cards in Deck
+                  // remaining=true only shuffles cards in main stack, not piles or cards drawn
+                  cy.request(`https://www.deckofcardsapi.com/api/deck/${deckID}/shuffle/?remaining=true`).then(response => {
+                    successStatusObjBody(response)
+                    expect(response.body.shuffled).to.eq(true)
+                    expect(response.body.remaining).to.eq(44)
+                  })
+                })
+              })
+            })
+          })
+        })
+      })
     }) 
   })
-
-  // ReShuffle Cards
-  //https://www.deckofcardsapi.com/api/deck/<<deck_id>>/shuffle/
-  //https://www.deckofcardsapi.com/api/deck/<<deck_id>>/shuffle/?remaining=true
-
-  // Shuffle Piles
-  // https://www.deckofcardsapi.com/api/deck/<<deck_id>>/pile/<<pile_name>>/shuffle/
-
-  // Listing Cards in Piles
-  // https://www.deckofcardsapi.com/api/deck/<<deck_id>>/pile/<<pile_name>>/list/
 
   // Drawing from Piles
   // https://www.deckofcardsapi.com/api/deck/<<deck_id>>/pile/<<pile_name>>/draw/?cards=AS
 
-  // Returning Cards to Deck
-  //https://www.deckofcardsapi.com/api/deck/<<deck_id>>/return/
-
   // Partial Deck -- WIP
   // https://www.deckofcardsapi.com/api/deck/new/shuffle/?cards=AS,2S,KS,AD,2D,KD,AC,2C,KC,AH,2H,KH
-
   it('Should GET a partial deck)', () => {
     cy.request("https://www.deckofcardsapi.com/api/deck/new/shuffle/?cards=AS,2S,KS,AD,2D,KD,AC,2C,KC,AH,2H,KH").should(response => {
       expect(response.status).to.equal(200)
@@ -65,8 +91,7 @@ describe("Deck of Cards API", () => {
 
   it('Should draw cards from a new shuffled deck)', () => {
     cy.request("https://www.deckofcardsapi.com/api/deck/new/draw/?count=2").should(response => {
-      expect(response.status).to.equal(200)
-      assert.isObject(response.body, "Response body is an object")
+      successStatusObjBody(response)
       expect(response.body.cards).to.have.length(2)
       expect(response.body.remaining).to.eq(50)
     })
@@ -75,8 +100,7 @@ describe("Deck of Cards API", () => {
   // Brand New Deck
   it('Should GET a new deck of cards (with/without Jokers)', () => {
     cy.request("https://www.deckofcardsapi.com/api/deck/new").should(response => {
-      expect(response.status).to.equal(200)
-      assert.isObject(response.body, "Response body is an object")
+      successStatusObjBody(response)
       // New deck would not be shuffled yet and standard deck is 52 cards
       expect(response.body.shuffled).to.eq(false)
       expect(response.body.remaining).to.eq(52)
@@ -99,8 +123,7 @@ describe("Deck of Cards API", () => {
 
   it('Should shuffle 2 decks of cards', () => {
     cy.request("https://www.deckofcardsapi.com/api/deck/new/shuffle/?deck_count=2").then(response => {
-      expect(response.status).to.equal(200)
-      assert.isObject(response.body, "Response body is an object")
+      successStatusObjBody(response)
       expect(response.body.shuffled).to.eq(true)
       expect(response.body.remaining).to.eq(104)
     })
