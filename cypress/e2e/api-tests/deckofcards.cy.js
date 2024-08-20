@@ -86,10 +86,11 @@ describe("Deck of Cards API", () => {
   })
 
   // Partial Deck -- WIP
-  // https://www.deckofcardsapi.com/api/deck/new/shuffle/?cards=AS,2S,KS,AD,2D,KD,AC,2C,KC,AH,2H,KH
-  it.skip('Should GET a partial deck)', () => {
-    cy.request("https://www.deckofcardsapi.com/api/deck/new/shuffle/?cards=AS,2S,KS,AD,2D,KD,AC,2C,KC,AH,2H,KH").should(response => {
-      expect(response.status).to.equal(200)
+  it('Should GET a partial deck', () => {
+    cy.request("https://www.deckofcardsapi.com/api/deck/new/shuffle/?cards=AS,AD,AC,AH,KS,KD,KC,KH,QS,QD,QC,QH,JS,JD,JC,JH").should(response => {
+      successStatusObjBody(response)
+      expect(response.body.shuffled).to.eq(true)
+      expect(response.body.remaining).to.eq(16)
     })
   })
 
