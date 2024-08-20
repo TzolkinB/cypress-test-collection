@@ -1,11 +1,11 @@
 describe("Checkers Game Messages", () => {
 	beforeEach(() => {
 		cy.visit("https://www.gamesforthebrain.com/game/checkers/")
-		cy.url().should("include", "/checkers")
+		cy.url().should('include', '/checkers')
   })
 
 	it('Should display message "Select an orange piece to move." on init', () => {
-		cy.get(".content").within(() => {
+		cy.get('.content').within(() => {
 			cy.verifyLink(0, "Restart...", "./")	
 			cy.verifyMessage("Select an orange piece to move.", "be.visible")
 		})
@@ -13,24 +13,25 @@ describe("Checkers Game Messages", () => {
 
 	it('Should display message "Click on your orange piece, then click where you want to move it"', () => {
 		// Ex: This message displays if you click on a blue piece
-		cy.get(".content").within(() => {
+		cy.get('.content').within(() => {
 			cy.get('img[name="space55"]').click()
 			cy.verifyMessage("Click on your orange piece, then click where you want to move it.", "be.visible")
 		})
 	})
 
 	it('Should display message "Make a move."', () => {
-		cy.get(".content").within(() => {
+		cy.get('.content').within(() => {
 			cy.yourFirstMove("space42", "space33")
 			cy.verifyMessage("Make a move.", "be.visible")
 		})
 	})
 
 	it('Should display message "Move diagonally only."', () => {
-		cy.get(".content").within(() => {
+		cy.get('.content').within(() => {
 			cy.yourFirstMove("space42", "space33")
 			// Make sure it is your turn to move again
 			cy.verifyMessage("Make a move.", "be.visible")
+			// eslint-disable-next-line cypress/no-unnecessary-waiting
 			cy.wait(1000) // bad practice but no other way
 			cy.get('img[name="space33"]').should('have.attr','src','you1.gif').click()
 			// Select a grey space horizontal to your location to move the piece to
@@ -40,7 +41,7 @@ describe("Checkers Game Messages", () => {
 	})
 
 	it('Should display message "Please wait."', () => {
-		cy.get(".content").within(() => {
+		cy.get('.content').within(() => {
 			cy.yourFirstMove("space42", "space33")
 			// Make sure it is your turn to move again
 			cy.verifyMessage("Make a move.", "be.visible")
@@ -52,10 +53,11 @@ describe("Checkers Game Messages", () => {
 	})
 
 	it('Should display message "This is an invalid move."', () => {
-		cy.get(".content").within(() => {
+		cy.get('.content').within(() => {
 			cy.yourFirstMove("space42", "space53")
 			// Make sure it is your turn to move again
 			cy.verifyMessage("Make a move.", "be.visible")
+			// eslint-disable-next-line cypress/no-unnecessary-waiting
 			cy.wait(1000) // bad practice but no other way
 			cy.get('img[name="space51"]').should('have.attr','src','you1.gif').click()
 			cy.get('img[name="space15"]').click()
