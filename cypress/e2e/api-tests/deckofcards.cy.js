@@ -9,30 +9,29 @@ describe("Deck of Cards API", () => {
       assert.isObject(response.body, "Response body is an object")
   }
 
-  it.only('Should shuffle a deck of cards, draw cards, make a pile', () => {
+  it('Should shuffle a deck of cards, draw cards, make a pile', () => {
     // Shuffle Cards
     cy.log('Shuffle the deck')
     cy.request("https://www.deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1").then(response => {
+      const deckID = response.body.deck_id
       successStatusObjBody(response)
       expect(response.body).to.have.property('shuffled').to.eq(true)
       expect(response.body.shuffled).to.eq(true)
       expect(response.body.remaining).to.eq(52)
 
-      const deckID = response.body.deck_id
       
       // Draw Cards
       cy.log('Draw 12 cards')
       cy.request(`https://www.deckofcardsapi.com/api/deck/${deckID}/draw/?count=12`).then(response => {
-        successStatusObjBody(response)
-        expect(response.body.cards).to.have.length(12)
-        expect(response.body.remaining).to.eq(40)
-        
+        const pileName = 'pile1Cards'
         const cardArray = response.body.cards
         const cardCodes = cardArray.map(card => card.code)
         // Out of 12 drawn cards, set aside 8 in a pile
         const cardValues = cardCodes.slice(4).join()
 
-        const pileName = 'pile1Cards'
+        successStatusObjBody(response)
+        expect(response.body.cards).to.have.length(12)
+        expect(response.body.remaining).to.eq(40)
         
         // Add Drawn Cards to Piles
         cy.log('Add 8 cards to a pile')
@@ -53,6 +52,7 @@ describe("Deck of Cards API", () => {
 
               // List Cards in the Pile
               cy.request(`https://www.deckofcardsapi.com/api/deck/${deckID}/pile/${pileName}/list/`).then(response => {
+                const shuffledCardPile = response.body.piles.pile1Cards.cards
                 expect(response.body.piles.pile1Cards.cards).to.not.deep.eq(cardArray.slice(4))
 
                 // Return Cards to Deck
@@ -68,6 +68,13 @@ describe("Deck of Cards API", () => {
                     successStatusObjBody(response)
                     expect(response.body.shuffled).to.eq(true)
                     expect(response.body.remaining).to.eq(44)
+
+                    // Draw Cards from Pile
+                    cy.request(`https://www.deckofcardsapi.com/api/deck/${deckID}/pile/${pileName}/draw/bottom/?count=2`).then(response => {
+                      successStatusObjBody(response)
+                      expect(response.body.piles.pile1Cards.remaining).to.eq(6)
+                      expect(response.body.cards).to.deep.eq(shuffledCardPile.slice(0,2))
+                    })
                   })
                 })
               })
@@ -78,12 +85,9 @@ describe("Deck of Cards API", () => {
     }) 
   })
 
-  // Drawing from Piles
-  // https://www.deckofcardsapi.com/api/deck/<<deck_id>>/pile/<<pile_name>>/draw/?cards=AS
-
   // Partial Deck -- WIP
   // https://www.deckofcardsapi.com/api/deck/new/shuffle/?cards=AS,2S,KS,AD,2D,KD,AC,2C,KC,AH,2H,KH
-  it('Should GET a partial deck)', () => {
+  it.skip('Should GET a partial deck)', () => {
     cy.request("https://www.deckofcardsapi.com/api/deck/new/shuffle/?cards=AS,2S,KS,AD,2D,KD,AC,2C,KC,AH,2H,KH").should(response => {
       expect(response.status).to.equal(200)
     })
