@@ -4,19 +4,16 @@
 
 Cypress Tests for Checkers Game UI and Deck of Cards API
 
-## Checkers Game
+- [Checkers Game](https://www.gamesforthebrain.com/game/checkers/)
+- [Deck of Cards API](https://www.deckofcardsapi.com/)
 
-[Checkers](https://www.gamesforthebrain.com/game/checkers/)
+## Folder Structure
 
-- 2 integration test files
-  - checkers.cy.js
-  - checkersMessages.cy.js
-- 1 regression test file, responsive
-  - checkers.cy.js
-
-## Deck of Cards API
-
-[Deck of Cards](https://www.deckofcardsapi.com/)
-
-- 1 api test file
-  - deckofcards.cy.js
+- e2e/
+  - api-tests/
+    - [deckofcards.cy.js](https://github.com/TzolkinB/cypress-test-collection/blob/main/cypress/e2e/api-tests/deckofcards.cy.js)
+  - integration/
+    - [checkers.cy.js](https://github.com/TzolkinB/cypress-test-collection/blob/main/cypress/e2e/integration/checkers.cy.js)
+    - [checkersMessages.cy.js](https://github.com/TzolkinB/cypress-test-collection/blob/main/cypress/e2e/integration/checkersMessages.cy.js)
+  - regression/
+    - [checkers.cy.js](https://github.com/TzolkinB/cypress-test-collection/blob/main/cypress/e2e/regression/checkers.cy.js)
