@@ -9,7 +9,7 @@ describe("Deck of Cards API", () => {
       assert.isObject(response.body, "Response body is an object")
   }
 
-  it('Should shuffle a deck of cards, draw cards, make a pile, return cards to deck and draw from pile', () => {
+  it.only('Should shuffle a deck of cards, draw cards, make a pile, return cards to deck and draw from pile', () => {
     // Shuffle Cards
     cy.log('Shuffle the deck')
     cy.request("/api/deck/new/shuffle/?deck_count=1").then(response => {
@@ -18,7 +18,6 @@ describe("Deck of Cards API", () => {
       expect(response.body).to.have.property('shuffled').to.eq(true)
       expect(response.body.shuffled).to.eq(true)
       expect(response.body.remaining).to.eq(52)
-
       
       // Draw Cards
       cy.log('Draw 12 cards')
@@ -28,6 +27,9 @@ describe("Deck of Cards API", () => {
         const cardCodes = cardArray.map(card => card.code)
         // Out of 12 drawn cards, set aside 8 in a pile
         const cardValues = cardCodes.slice(4).join()
+        // If only want heart cards
+        const heartCards = cardArray.filter(cards => cards.suit === "HEARTS")
+        cy.log('heartCards', heartCards)
 
         successStatusObjBody(response)
         expect(response.body.cards).to.have.length(12)

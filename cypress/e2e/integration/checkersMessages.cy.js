@@ -31,8 +31,8 @@ describe("Checkers Game Messages", () => {
 			cy.yourFirstMove("space42", "space33")
 			// Make sure it is your turn to move again
 			cy.verifyMessage("Make a move.", "be.visible")
-			// eslint-disable-next-line cypress/no-unnecessary-waiting
-			cy.wait(1000) // bad practice but no other way
+			// Bug in code and full path instead of img file
+			cy.get('img[src$="me2.gif"]').should('not.exist')
 			cy.get('img[name="space33"]').should('have.attr','src','you1.gif').click()
 			// Select a grey space horizontal to your location to move the piece to
 			cy.get('img[name="space53"]').click()
@@ -52,13 +52,12 @@ describe("Checkers Game Messages", () => {
 		})
 	})
 
-	it('Should display message "This is an invalid move."', () => {
+	it.only('Should display message "This is an invalid move."', () => {
 		cy.get('.content').within(() => {
 			cy.yourFirstMove("space42", "space53")
 			// Make sure it is your turn to move again
 			cy.verifyMessage("Make a move.", "be.visible")
-			// eslint-disable-next-line cypress/no-unnecessary-waiting
-			cy.wait(1000) // bad practice but no other way
+			cy.get('img[src$="me2.gif"]').should('not.exist')
 			cy.get('img[name="space51"]').should('have.attr','src','you1.gif').click()
 			cy.get('img[name="space15"]').click()
 			cy.verifyMessage("This is an invalid move.", "be.visible")
