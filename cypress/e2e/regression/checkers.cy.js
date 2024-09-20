@@ -17,23 +17,24 @@ describe("Regression - Responsive Checkers Game UI", () => {
 
 				cy.verifyMessage("Select an orange piece to move.", "be.visible")
 				cy.yourFirstMove("space02", "space13")
+				// Bug in code and full path instead of img file
+				cy.get('img[src$="me2.gif"]').should('be.visible')
 				cy.verifyMessage("Make a move.", "be.visible")
-				// eslint-disable-next-line cypress/no-unnecessary-waiting
-				cy.wait(1000) // bad practice but no other way
 
 				// 2nd move
+				cy.log('2nd move')
+				cy.get('img[src$="me2.gif"]').should('not.exist')
 				cy.get('img[name="space62"]').should('have.attr','src','you1.gif').click()
 				cy.get('img[name="space53"]').click()
+				cy.get('img[name="space53"]').should('have.attr','src','you1.gif')
 				cy.verifyMessage("Make a move.", "be.visible")
 				// Verify computer has taken your piece, start with 12
 				cy.get('img[src="you1.gif"]').should('have.length', 11)
 
-				/*
-				3rd move
-				Wait until last step is complete before can continue
-				*/
-				// eslint-disable-next-line cypress/no-unnecessary-waiting
-				cy.wait(2000) // bad practice but no other way
+				
+				// 3rd move
+				cy.log('3rd move')
+				cy.get('img[src$="me2.gif"]').should('not.exist')
 				cy.get('img[name="space53"]').should('have.attr','src','you1.gif').click()
 				cy.get('img[name="space44"]').click()
 				// Verify computer has taken your piece
@@ -54,9 +55,14 @@ describe("Regression - Responsive Checkers Game UI", () => {
 
 				cy.get('#footer').within(() => {
 					cy.get('a').should('have.length', 3)
-					cy.verifyLink(0, "Games for the Brain", "/")
-					cy.verifyLink(1, "Bonus Room", "/bonus/")
-					cy.verifyLink(2, "About", "/about/")
+					const links = [
+						{ name: 'Games for the Brain', href: '/' },
+						{ name: 'Bonus Room', href: '/bonus/' },
+						{ name: 'About', href: '/about/' },
+					]
+					links.forEach((link, index) => {
+						cy.verifyLink(index, link.name, link.href)
+					})
 				})
 			})
 		})
