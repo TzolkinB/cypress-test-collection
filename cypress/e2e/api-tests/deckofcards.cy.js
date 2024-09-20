@@ -9,7 +9,7 @@ describe("Deck of Cards API", () => {
       assert.isObject(response.body, "Response body is an object")
   }
 
-  it.only('Should shuffle a deck of cards, draw cards, make a pile, return cards to deck and draw from pile', () => {
+  it('Should shuffle a deck of cards, draw cards, make a pile, return cards to deck and draw from pile', () => {
     // Shuffle Cards
     cy.log('Shuffle the deck')
     cy.request("/api/deck/new/shuffle/?deck_count=1").then(response => {

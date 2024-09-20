@@ -52,7 +52,7 @@ describe("Checkers Game Messages", () => {
 		})
 	})
 
-	it.only('Should display message "This is an invalid move."', () => {
+	it('Should display message "This is an invalid move."', () => {
 		cy.get('.content').within(() => {
 			cy.yourFirstMove("space42", "space53")
 			// Make sure it is your turn to move again
