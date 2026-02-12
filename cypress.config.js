@@ -1,11 +1,12 @@
-const { defineConfig } = require("cypress");
+import { defineConfig } from 'cypress'
 
-module.exports = defineConfig({
+export default defineConfig({
   e2e: {
-    setupNodeEvents(on, config) {
+    setupNodeEvents() {
       // implement node event listeners here
     },
-    baseUrl: "https://www.deckofcardsapi.com/",
+    baseUrl: 'https://www.deckofcardsapi.com/',
     experimentalRunAllSpecs: true,
+    allowCypressEnv: false,
   },
-});
+})
