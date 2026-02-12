@@ -7,9 +7,5 @@ export default defineConfig({
     },
     baseUrl: 'https://www.deckofcardsapi.com/',
     experimentalRunAllSpecs: true,
-    allowCypressEnv: false,
-  },
-  env: {
-    requestMode: false,
   },
 })
