@@ -83,7 +83,7 @@ jobs:
           path: ~/.npm
           key: npm-${{ hashFiles('package-lock.json') }}
       - name: Cypress E2E
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           config: retries=1
       - name: Artifacts
