@@ -9,4 +9,7 @@ export default defineConfig({
     experimentalRunAllSpecs: true,
     allowCypressEnv: false,
   },
+  env: {
+    requestMode: false,
+  },
 })
