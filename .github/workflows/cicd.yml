@@ -87,7 +87,7 @@ jobs:
         with:
           config: retries=1
       - name: Artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         # store screenshots only on failures
         if: failure()
         with:
