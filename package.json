@@ -19,11 +19,11 @@
   "homepage": "https://github.com/TzolkinB/cypress-test-collection#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "cypress": "^15.11.0",
+    "cypress": "^15.13.1",
     "cypress-plugin-api": "^2.11.2",
-    "eslint": "^10.0.3",
+    "eslint": "^10.2.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-cypress": "^6.2.0",
+    "eslint-plugin-cypress": "^6.2.3",
     "eslint-plugin-prettier": "^5.5.5",
     "globals": "^17.4.0",
     "prettier": "^3.8.1"
