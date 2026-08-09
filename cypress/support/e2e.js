@@ -19,3 +19,25 @@ import 'cypress-plugin-api'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+// eslint-disable-next-line no-unused-vars
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // unknown error with message
+  // and don't want to fail the test so we return false
+  if (err.message.includes('ResizeObserver loop completed with undelivered notifications.')) {
+    return false
+  }
+  // we still want to ensure there are no other unexpected
+  // errors, so we let them fail the test
+})
+
+
+// Hide fetch/XHR requests
+const app = window.top;
+if (!app.document.head.querySelector('[data-hide-command-log-request]')) {
+  const style = app.document.createElement('style');
+  style.innerHTML =
+    '.command-name-request, .command-name-xhr { display: none }';
+  style.setAttribute('data-hide-command-log-request', '');
+
+  app.document.head.appendChild(style);
+}
